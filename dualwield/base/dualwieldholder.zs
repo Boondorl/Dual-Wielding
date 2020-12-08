@@ -27,16 +27,6 @@ class DualWieldHolder : Weapon
 			Loop;
 	}
 	
-	DWWeapon GetRightWeapon()
-	{
-		return holding[RIGHT];
-	}
-	
-	DWWeapon GetLeftWeapon()
-	{
-		return holding[LEFT];
-	}
-	
 	override State GetReadyState()
 	{
 		if (holding[LEFT])
@@ -126,20 +116,24 @@ class DualWieldHolder : Weapon
 	override bool DepleteAmmo(bool altFire, bool checkEnough, int ammouse)
 	{
 		if (!altFire)
-			return holding[LEFT].DepleteAmmo(false, checkEnough, ammouse);
+			return holding[LEFT] ? holding[LEFT].DepleteAmmo(false, checkEnough, ammouse) : false;
 			
-		return holding[RIGHT].DepleteAmmo(false, checkEnough, ammouse);
+		return holding[RIGHT] ? holding[RIGHT].DepleteAmmo(false, checkEnough, ammouse) : false;
 	}
 	
 	override bool CheckAmmo(int fireMode, bool autoSwitch, bool requireAmmo, int ammocount)
 	{
 		if (fireMode == EitherFire)
-			return holding[LEFT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount) || holding[RIGHT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount);
+		{
+			bool left = holding[LEFT] ? holding[LEFT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount) : false;
+			bool right = holding[RIGHT] ? holding[RIGHT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount) : false;
+			return left || right;
+		}
 			
 		if (fireMode == PrimaryFire)
-			return holding[LEFT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount);
+			return holding[LEFT] ? holding[LEFT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount) : false;
 			
-		return holding[RIGHT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount);
+		return holding[RIGHT] ? holding[RIGHT].CheckAmmo(PrimaryFire, false, requireAmmo, ammocount) : false;
 	}
 	
 	override void DoEffect()
@@ -154,9 +148,19 @@ class DualWieldHolder : Weapon
 				holding[LEFT].bDualWielded = false;
 				holding[LEFT] = null;
 				owner.player.SetPSprite(PSP_LEFTWEAPON, null);
+				owner.player.SetPSPrite(PSP_LEFTFLASH, null);
 			}
 			else
+			{
 				Ammo1 = holding[LEFT].Ammo1;
+				let psp = owner.player.FindPSprite(PSP_LEFTWEAPON);
+				if (psp)
+					psp.bAddBob = holding[LEFT].weaponState & WF_WEAPONBOBBING;
+					
+				psp = owner.player.FindPSprite(PSP_LEFTFLASH);
+				if (psp)
+					psp.bAddBob = holding[LEFT].weaponState & WF_WEAPONBOBBING;
+			}
 		}
 		
 		if (holding[RIGHT])
@@ -166,9 +170,19 @@ class DualWieldHolder : Weapon
 				holding[RIGHT].bDualWielded = false;
 				holding[RIGHT] = null;
 				owner.player.SetPSprite(PSP_RIGHTWEAPON, null);
+				owner.player.SetPSprite(PSP_RIGHTFLASH, null);
 			}
 			else
+			{
 				Ammo2 = holding[RIGHT].Ammo1;
+				let psp = owner.player.FindPSprite(PSP_RIGHTWEAPON);
+				if (psp)
+					psp.bAddBob = holding[RIGHT].weaponState & WF_WEAPONBOBBING;
+					
+				psp = owner.player.FindPSprite(PSP_RIGHTFLASH);
+				if (psp)
+					psp.bAddBob = holding[RIGHT].weaponState & WF_WEAPONBOBBING;
+			}
 		}
 			
 		if ((!holding[LEFT] || !holding[RIGHT]) && owner.player.ReadyWeapon == self)

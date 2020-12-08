@@ -48,6 +48,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 			
 		Fire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
+			TNT1 A 0 A_GunFlash;
 			CHGG A 4 A_FireBullets(5.6,0,1,5);
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
 			CHGG B 4 A_FireBullets(5.6,0,1,5);
@@ -56,23 +57,34 @@ class MPChaingun : MPWeapon replaces Chaingun
 			
 		LeftFire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG A 4 A_FireBullets(5.6,0,1,5);
+			TNT1 A 0 A_DualGunFlash;
+			CHGG A 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG B 4 A_FireBullets(5.6,0,1,5);
+			CHGG B 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
 			CHGG B 0 A_DualReFire;
 			Goto LeftReady;
 			
 		RightFire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG A 4 A_FireBullets(5.6,0,1,5);
+			TNT1 A 0 A_DualGunFlash;
+			CHGG A 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG B 4 A_FireBullets(5.6,0,1,5);
+			CHGG B 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
 			CHGG B 0 A_DualReFire;
 			Goto RightReady;
 			
 		Flash:
-			CHGF A 5 Bright A_Light1;
+			CHGF A 4 Bright A_Light1;
+			CHGF B 4 Bright A_Light1;
 			Goto LightDone;
+			
+		LeftFlash:
+			TNT1 A 0 Offset(-64,0);
+			Goto Flash;
+			
+		RightFlash:
+			TNT1 A 0 Offset(64,0);
+			Goto Flash;
 			
 		Spawn:
 			MGUN A -1;

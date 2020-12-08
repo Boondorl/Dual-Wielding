@@ -1,22 +1,23 @@
+// TODO: Weapon switching
 class DWPlayerPawn : PlayerPawn
 {
 	override void FireWeapon(State stat)
 	{
-		let wpnh = DualWieldHolder(player.ReadyWeapon);
-		if (!wpnh)
+		let dwh = DualWieldHolder(player.ReadyWeapon);
+		if (!dwh)
 		{
 			super.FireWeapon(stat);
 			return;
 		}
 			
-		let wpn = wpnh.GetLeftWeapon();
+		let wpn = dwh.holding[LEFT];
 		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false))
 			return;
 
 		wpn.weaponState &= ~WF_WEAPONBOBBING;
 		PlayAttacking();
 		wpn.bAltFire = false;
-		wpnh.bAltFire = false;
+		dwh.bAltFire = false;
 		if (!stat)
 			stat = wpn.GetLeftAtkState(!!player.refire);
 		
@@ -34,21 +35,21 @@ class DWPlayerPawn : PlayerPawn
 	
 	override void FireWeaponAlt(State stat)
 	{
-		let wpnh = DualWieldHolder(player.ReadyWeapon);
-		if (!wpnh)
+		let dwh = DualWieldHolder(player.ReadyWeapon);
+		if (!dwh)
 		{
 			super.FireWeaponAlt(stat);
 			return;
 		}
 			
-		let wpn = wpnh.GetRightWeapon();
+		let wpn = dwh.holding[RIGHT];
 		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false))
 			return;
 
 		wpn.weaponState &= ~WF_WEAPONBOBBING;
 		PlayAttacking();
 		wpn.bAltFire = false;
-		wpnh.bAltFire = true;
+		dwh.bAltFire = true;
 		if (!stat)
 			stat = wpn.GetRightAtkState(!!player.refire);
 		
@@ -64,36 +65,40 @@ class DWPlayerPawn : PlayerPawn
 			SoundAlert(self, false);
 	}
 	
-	override void CheckWeaponChange()
-	{
-		if ((player.WeaponState & WF_DISABLESWITCH) || player.morphTics != 0)
-			player.PendingWeapon = WP_NOCHANGE;
-
-		if ((player.PendingWeapon != WP_NOCHANGE || player.health <= 0) &&
-			player.WeaponState & WF_WEAPONSWITCHOK)
-		{
-			// Get the DualWieldHolder instead if it's dual wielding
-			let dwwpn = DWWeapon(player.PendingWeapon);
-			if (dwwpn && dwwpn.DualWielding())
-			{
-				for (let probe = inv; probe; probe = probe.inv)
-				{
-					let holder = DualWieldHolder(probe);
-					if (holder && (dwwpn == holder.GetLeftWeapon() || dwwpn == holder.GetRightWeapon()))
-					{
-						// TODO: This should account for multiple weapons in a slot
-						player.PendingWeapon = holder;
-						break;
-					}
-				}
-			}
-			
-			DropWeapon();
-		}
-	}
-	
 	override void TickPSprites()
 	{
+		// Get the DualWieldHolder instead if it's dual wielding
+		let dwwpn = DWWeapon(player.PendingWeapon);
+		if (dwwpn && dwwpn.bDualWielded)
+		{
+			for (let probe = inv; probe; probe = probe.inv)
+			{
+				let holder = DualWieldHolder(probe);
+				if (holder && (dwwpn == holder.holding[LEFT] || dwwpn == holder.holding[RIGHT]))
+				{
+					if (holder == player.ReadyWeapon)
+					{
+						bool found;
+						int slot;
+						[found, slot] = player.weapons.LocateWeapon(dwwpn.GetClass());
+						if (found && player.weapons.SlotSize(slot) > 2)
+						{
+							let cur = player.ReadyWeapon;
+							player.ReadyWeapon = dwwpn;
+							player.PendingWeapon = PickPrevWeapon();
+							player.ReadyWeapon = cur;
+						}
+						else
+							player.PendingWeapon = null;
+					}
+					else
+						player.PendingWeapon = holder;
+						
+					break;
+				}
+			}
+		}
+			
 		let pspr = player.psprites;
 		while (pspr)
 		{
@@ -104,14 +109,14 @@ class DWPlayerPawn : PlayerPawn
 			}
 			else
 			{
-				let wpnh = DualWieldHolder(pspr.owner.ReadyWeapon);
-				if (wpnh)
+				let dwh = DualWieldHolder(pspr.owner.ReadyWeapon);
+				if (dwh)
 				{
 					// Ensure the right caller is set at all times
-					if (pspr.id == PSP_LEFTWEAPON)
-						pspr.caller = wpnh.GetLeftWeapon();
-					else if (pspr.id == PSP_RIGHTWEAPON)
-						pspr.caller = wpnh.GetRightWeapon();
+					if (pspr.id == PSP_LEFTWEAPON || pspr.id == PSP_LEFTFLASH)
+						pspr.caller = dwh.holding[LEFT];
+					else if (pspr.id == PSP_RIGHTWEAPON || pspr.id == PSP_RIGHTFLASH)
+						pspr.caller = dwh.holding[RIGHT];
 						
 					if (!pspr.caller)
 						pspr.Destroy();
@@ -155,8 +160,8 @@ class DWPlayerPawn : PlayerPawn
 			return;
 		
 		bool fired;
-		int state1 = wpn.holding[LEFT].weaponState;
-		int state2 = wpn.holding[RIGHT].weaponState;
+		int state1 = wpn.holding[LEFT] ? wpn.holding[LEFT].weaponState : 0;
+		int state2 = wpn.holding[RIGHT] ? wpn.holding[RIGHT].weaponState : 0;
 		
 		if ((state1 & WF_WEAPONREADY) && (player.cmd.buttons & BT_ATTACK))
 		{

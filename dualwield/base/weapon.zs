@@ -1,15 +1,10 @@
+// TODO: Weird ammo consumption while firing
 class DWWeapon : Weapon
 {
 	bool bDualWielded;
 	int weaponState;
 	int refire;
-	
-	private State prevState;
-	
-	bool DualWielding()
-	{
-		return bDualWielded;
-	}
+	bool attackdown;
 	
 	action void A_DualWeaponReady(int flags = 0)
 	{
@@ -21,10 +16,67 @@ class DWWeapon : Weapon
 	
 	action void A_DualReFire(StateLabel sl = null)
 	{
-		int prevReFire = player.refire;
-		A_ReFire(sl);
-		invoker.refire += player.refire - prevReFire;
-		player.refire = prevReFire;
+		let wpn = DualWieldHolder(player.ReadyWeapon);
+		if (!wpn)
+			return;
+			
+		bool pending = player.PendingWeapon != WP_NOCHANGE && (player.WeaponState & WF_REFIRESWITCHOK);
+		bool fired;
+		if (!pending && player.health > 0)
+		{
+			if ((player.cmd.buttons & BT_ATTACK) && wpn.holding[LEFT] == invoker)
+			{
+				++invoker.refire;
+				player.mo.FireWeapon(invoker.FindState(sl));
+				fired = true;
+			}
+			
+			if ((player.cmd.buttons & BT_ALTATTACK) && wpn.holding[RIGHT] == invoker)
+			{
+				++invoker.refire;
+				player.mo.FireWeaponAlt(invoker.FindState(sl));
+				fired = true;
+			}
+		}
+		
+		if (!fired)
+			invoker.refire = 0;
+	}
+	
+	action void A_DualGunFlash(StateLabel sl = null, int flags = 0)
+	{
+		let wpn = DualWieldHolder(player.ReadyWeapon);
+		if (!wpn)
+			return;
+
+		if (!(flags & GFF_NOEXTCHANGE))
+			player.mo.PlayAttacking2();
+			
+		State flash;
+		if (!sl)
+		{
+			if (wpn.holding[LEFT] == invoker)
+				flash = invoker.FindState("LeftFlash");
+			else
+				flash = invoker.FindState("RightFlash");
+		}
+		else
+			flash = invoker.FindState(sl);
+			
+		let psp = player.GetPSprite(wpn.holding[LEFT] == invoker ? PSP_LEFTFLASH : PSP_RIGHTFLASH);
+		if (psp)
+		{
+			psp.caller = invoker;
+			psp.SetState(flash);
+		}
+	}
+	
+	action double GetAccuracy(int shots)
+	{
+		if (shots == 1)
+			return invoker.refire ? -1 : 0;
+			
+		return shots;
 	}
 	
 	override void DoEffect()
