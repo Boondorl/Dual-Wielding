@@ -29,8 +29,8 @@ class MPChaingun : MPWeapon replaces Chaingun
 		
 		LeftDeselect:
 		RightDeselect:
-			CHGG A 16;
-			Stop;
+			CHGG A 1 A_DualLower;
+			Loop;
 			
 		Select:
 			CHGG A 1 A_Raise;
@@ -38,44 +38,41 @@ class MPChaingun : MPWeapon replaces Chaingun
 			
 		LeftSelect:
 			TNT1 A 0 Offset(-64,0);
-			CHGG A 16;
-			Goto LeftReady;
+			CHGG A 1 A_DualRaise;
+			Wait;
 			
 		RightSelect:
 			TNT1 A 0 Offset(64,0);
-			CHGG A 16;
-			Goto RightReady;
+			CHGG A 1 A_DualRaise;
+			Wait;
 			
 		Fire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
 			TNT1 A 0 A_GunFlash;
-			CHGG A 4 A_FireBullets(5.6,0,1,5);
-			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG B 4 A_FireBullets(5.6,0,1,5);
+			CHGG A 2 A_FireBullets(5.6,0,-1,5);
+			CHGG B 2;
 			CHGG B 0 A_ReFire;
 			Goto Ready;
 			
 		LeftFire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
 			TNT1 A 0 A_DualGunFlash;
-			CHGG A 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
-			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG B 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
+			CHGG A 2 A_FireBullets(8.4,0,-1,5);
+			CHGG B 2;
 			CHGG B 0 A_DualReFire;
 			Goto LeftReady;
 			
 		RightFire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
 			TNT1 A 0 A_DualGunFlash;
-			CHGG A 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
-			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
-			CHGG B 4 A_FireBullets(8.4,0,GetAccuracy(1),5);
+			CHGG A 2 A_FireBullets(8.4,0,-1,5);
+			CHGG B 2;
 			CHGG B 0 A_DualReFire;
 			Goto RightReady;
 			
 		Flash:
-			CHGF A 4 Bright A_Light1;
-			CHGF B 4 Bright A_Light1;
+			CHGF A 2 Bright A_Light1;
+			CHGF B 2 Bright;
 			Goto LightDone;
 			
 		LeftFlash:

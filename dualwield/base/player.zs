@@ -11,7 +11,7 @@ class DWPlayerPawn : PlayerPawn
 		}
 			
 		let wpn = dwh.holding[LEFT];
-		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false))
+		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false) || !wpn.DepleteAmmo(false))
 			return;
 
 		wpn.weaponState &= ~WF_WEAPONBOBBING;
@@ -43,7 +43,7 @@ class DWPlayerPawn : PlayerPawn
 		}
 			
 		let wpn = dwh.holding[RIGHT];
-		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false))
+		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false) || !wpn.DepleteAmmo(false))
 			return;
 
 		wpn.weaponState &= ~WF_WEAPONBOBBING;
@@ -65,40 +65,48 @@ class DWPlayerPawn : PlayerPawn
 			SoundAlert(self, false);
 	}
 	
+	override Weapon PickNextWeapon()
+	{
+		let wpn = DualWieldHolder(player.ReadyWeapon);
+		if (!wpn)
+			return super.PickNextWeapon();
+			
+		player.ReadyWeapon = wpn.holding[RIGHT];
+		if (!player.ReadyWeapon)
+			player.ReadyWeapon = wpn.holding[LEFT];
+			
+		let next = super.PickNextWeapon();
+		if (next == player.ReadyWeapon)
+			next = wpn;
+			
+		player.ReadyWeapon = wpn;
+		
+		return next;
+	}
+
+	override Weapon PickPrevWeapon()
+	{
+		let wpn = DualWieldHolder(player.ReadyWeapon);
+		if (!wpn)
+			return super.PickPrevWeapon();
+			
+		player.ReadyWeapon = wpn.holding[RIGHT];
+		if (!player.ReadyWeapon)
+			player.ReadyWeapon = wpn.holding[LEFT];
+			
+		let prev = super.PickPrevWeapon();
+		if (prev == player.ReadyWeapon)
+			prev = wpn;
+			
+		player.ReadyWeapon = wpn;
+		
+		return prev;
+	}
+	
 	override void TickPSprites()
 	{
-		// Get the DualWieldHolder instead if it's dual wielding
-		let dwwpn = DWWeapon(player.PendingWeapon);
-		if (dwwpn && dwwpn.bDualWielded)
-		{
-			for (let probe = inv; probe; probe = probe.inv)
-			{
-				let holder = DualWieldHolder(probe);
-				if (holder && (dwwpn == holder.holding[LEFT] || dwwpn == holder.holding[RIGHT]))
-				{
-					if (holder == player.ReadyWeapon)
-					{
-						bool found;
-						int slot;
-						[found, slot] = player.weapons.LocateWeapon(dwwpn.GetClass());
-						if (found && player.weapons.SlotSize(slot) > 2)
-						{
-							let cur = player.ReadyWeapon;
-							player.ReadyWeapon = dwwpn;
-							player.PendingWeapon = PickPrevWeapon();
-							player.ReadyWeapon = cur;
-						}
-						else
-							player.PendingWeapon = null;
-					}
-					else
-						player.PendingWeapon = holder;
-						
-					break;
-				}
-			}
-		}
-			
+		CheckPendingWeapon();
+		
 		let pspr = player.psprites;
 		while (pspr)
 		{
@@ -131,7 +139,9 @@ class DWPlayerPawn : PlayerPawn
 
 			pspr = pspr.Next;
 		}
-
+		
+		ModifyWeaponState();
+		
 		if (health > 0 || (player.ReadyWeapon && !player.ReadyWeapon.bNoDeathInput))
 		{
 			if (!player.ReadyWeapon)
@@ -152,6 +162,71 @@ class DWPlayerPawn : PlayerPawn
 		}
 	}
 	
+	void CheckPendingWeapon()
+	{
+		let dwwpn = DWWeapon(player.PendingWeapon);
+		if (!dwwpn || !dwwpn.bDualWielded)
+			return;
+		
+		for (let probe = inv; probe; probe = probe.inv)
+		{
+			let holder = DualWieldHolder(probe);
+			if (!holder || (dwwpn != holder.holding[LEFT] && dwwpn != holder.holding[RIGHT]))
+				continue;
+			
+			if (dwwpn != holder.holding[RIGHT])
+				holder.bSwapWeapons = true;
+						
+			if (player.ReadyWeapon == holder)
+			{
+				if (holder.bSwapWeapons)
+					player.PendingWeapon = holder;
+				else
+				{
+					bool found;
+					int slot;
+					[found, slot] = player.weapons.LocateWeapon(dwwpn.GetClass());
+					if (found && player.weapons.SlotSize(slot) > 2)
+					{
+						let prev = PickPrevWeapon();
+						if (prev != holder)
+						{
+							int prevSlot;
+							[found, prevSlot] = player.weapons.LocateWeapon(prev.GetClass());
+							if (found && prevSlot == slot)
+								player.PendingWeapon = prev;
+							else
+								player.PendingWeapon = WP_NOCHANGE;
+						}
+						else
+							player.PendingWeapon = WP_NOCHANGE;
+					}
+					else
+						player.PendingWeapon = WP_NOCHANGE;
+				}
+			}
+			else
+				player.PendingWeapon = holder;
+						
+			break;
+		}
+	}
+	
+	void ModifyWeaponState()
+	{
+		let dwh = DualWieldHolder(player.ReadyWeapon);
+		if (!dwh)
+			return;
+			
+		int state1 = dwh.holding[LEFT] ? dwh.holding[LEFT].weaponState : 0;
+		int state2 = dwh.holding[RIGHT] ? dwh.holding[RIGHT].weaponState : 0;
+		int newState = state1 | state2;
+		if (!(state1 & WF_WEAPONSWITCHOK) || !(state2 & WF_WEAPONSWITCHOK))
+			newState &= ~WF_WEAPONSWITCHOK;
+			
+		player.WeaponState = newState;
+	}
+	
 	// Allows both primary and alt fires to be used at the same time
 	void CheckDualWeaponFire()
 	{
@@ -159,31 +234,39 @@ class DWPlayerPawn : PlayerPawn
 		if (!wpn)
 			return;
 		
-		bool fired;
 		int state1 = wpn.holding[LEFT] ? wpn.holding[LEFT].weaponState : 0;
 		int state2 = wpn.holding[RIGHT] ? wpn.holding[RIGHT].weaponState : 0;
 		
-		if ((state1 & WF_WEAPONREADY) && (player.cmd.buttons & BT_ATTACK))
+		if (state1 & WF_WEAPONREADY)
 		{
-			if (!player.attackdown || !wpn.bNoAutofire)
+			if (player.cmd.buttons & BT_ATTACK)
 			{
-				player.attackdown = true;
-				fired = true;
-				FireWeapon(null);
+				if (!wpn.holding[LEFT].attackdown || !wpn.holding[LEFT].bNoAutofire)
+				{
+					wpn.holding[LEFT].attackdown = true;
+					FireWeapon(null);
+				}
 			}
+			else
+				wpn.holding[LEFT].attackdown = false;
 		}
 		
-		if ((state2 & WF_WEAPONREADYALT) && (player.cmd.buttons & BT_ALTATTACK))
+		if (state2 & WF_WEAPONREADYALT)
 		{
-			if (!player.attackdown || !wpn.bNoAutofire)
+			if (player.cmd.buttons & BT_ALTATTACK)
 			{
-				player.attackdown = true;
-				fired = true;
-				FireWeaponAlt(null);
+				if (!wpn.holding[RIGHT].attackdown || !wpn.holding[RIGHT].bNoAutofire)
+				{
+					wpn.holding[RIGHT].attackdown = true;
+					FireWeaponAlt(null);
+				}
 			}
+			else
+				wpn.holding[RIGHT].attackdown = false;
 		}
 		
-		if (!fired)
-			player.attackdown = false;
+		bool attack1 = wpn.holding[LEFT] ? wpn.holding[LEFT].attackdown : false;
+		bool attack2 = wpn.holding[RIGHT] ? wpn.holding[RIGHT].attackdown : false;
+		player.attackdown = attack1 || attack2;
 	}
 }

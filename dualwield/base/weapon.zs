@@ -43,6 +43,11 @@ class DWWeapon : Weapon
 			invoker.refire = 0;
 	}
 	
+	action void A_DualClearReFire()
+	{
+		invoker.refire = 0;
+	}
+	
 	action void A_DualGunFlash(StateLabel sl = null, int flags = 0)
 	{
 		let wpn = DualWieldHolder(player.ReadyWeapon);
@@ -71,12 +76,85 @@ class DWWeapon : Weapon
 		}
 	}
 	
-	action double GetAccuracy(int shots)
+	action State A_DualCheckReload(StateLabel sl = null)
 	{
-		if (shots == 1)
-			return invoker.refire ? -1 : 0;
+		if(!invoker.CheckAmmo(PrimaryFire,false))
+		{
+			State st;
+			if (sl)
+				st = invoker.FindState(sl);
+			else
+				st = OverlayID() == PSP_LEFTWEAPON ? invoker.GetLeftReadyState() : invoker.GetRightReadyState();
+				
+			return st;
+		}
+		
+		return null;
+	}
+	
+	action void A_DualRaise(int raisespeed = 6)
+	{
+		if (player.PendingWeapon != WP_NOCHANGE)
+		{
+			player.mo.DropWeapon();
+			return;
+		}
+		
+		if (!player.ReadyWeapon)
+			return;
 			
-		return shots;
+		let psp = player.FindPSprite(OverlayID());
+		if (!psp)
+			return;
+
+		if (psp.y <= WEAPONBOTTOM - WEAPONTOP)
+			ResetPSprite(psp);
+			
+		psp.y -= raisespeed;
+		if (psp.y > 0)
+			return;
+			
+		psp.y = 0;
+		psp.SetState(OverlayID() == PSP_LEFTWEAPON ? invoker.GetLeftReadyState() : invoker.GetRightReadyState());
+	}
+	
+	action void A_DualLower(int lowerspeed = 6)
+	{
+		if (!player.ReadyWeapon)
+		{
+			player.mo.BringUpWeapon();
+			return;
+		}
+		
+		let psp = player.FindPSprite(OverlayID());
+		if (!psp)
+			return;
+		
+		int diff = WEAPONBOTTOM - WEAPONTOP;
+		if (player.morphTics || (player.cheats & CF_INSTANTWEAPSWITCH))
+			psp.y = diff;
+		else
+			psp.y += lowerspeed;
+			
+		if (psp.y < diff)
+			return;
+			
+		ResetPSprite(psp);
+		
+		if (player.playerstate == PST_DEAD)
+		{
+			player.SetPSprite(OverlayID() == PSP_LEFTWEAPON ? PSP_LEFTFLASH : PSP_RIGHTFLASH, null);
+			psp.SetState(invoker.FindState('DeadLowered'));
+			return;
+		}
+		
+		player.SetPSprite(OverlayID() == PSP_LEFTWEAPON ? PSP_LEFTFLASH : PSP_RIGHTFLASH, null);
+		psp.Destroy();
+	}
+	
+	action int GetAccuracy()
+	{
+		return invoker.refire ? -1 : 0;
 	}
 	
 	override void DoEffect()
