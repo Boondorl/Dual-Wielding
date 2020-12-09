@@ -13,13 +13,13 @@ class DWDoomPlayer : DWPlayerPawn
 		Player.StartItem "MPPistol";
 		Player.StartItem "Fist";
 		Player.StartItem "Clip", 50;
-		Player.WeaponSlot 1, "Fist", "Chainsaw";
+		Player.WeaponSlot 1, "Fist", "MPChainsaw";
 		Player.WeaponSlot 2, "MPPistol";
 		Player.WeaponSlot 3, "MPShotgun", "MPSuperShotgun";
 		Player.WeaponSlot 4, "MPChaingun";
-		Player.WeaponSlot 5, "RocketLauncher";
-		Player.WeaponSlot 6, "PlasmaRifle";
-		Player.WeaponSlot 7, "BFG9000";
+		Player.WeaponSlot 5, "MPRocketLauncher";
+		Player.WeaponSlot 6, "MPPlasmaRifle";
+		Player.WeaponSlot 7, "MPBFG9000";
 		
 		Player.ColorRange 112, 127;
 		Player.Colorset 0, "$TXT_COLOR_GREEN",		0x70, 0x7F,  0x72;

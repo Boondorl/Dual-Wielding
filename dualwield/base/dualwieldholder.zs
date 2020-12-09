@@ -184,6 +184,17 @@ class DualWieldHolder : Weapon
 		return tossed;
 	}
 	
+	override void PlayUpSound(Actor origin)
+	{
+		let left = holding[LEFT];
+		if (left && left.upSound)
+			origin.A_StartSound(left.upSound, CHAN_WEAPON);
+			
+		let right = holding[RIGHT];
+		if (right && right.upSound)
+			origin.A_StartSound(right.upSound, CHAN_WEAPON);
+	}
+	
 	override bool DepleteAmmo(bool altFire, bool checkEnough, int ammouse)
 	{
 		return true;
