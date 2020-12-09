@@ -11,9 +11,9 @@ class DWDoomPlayer : DWPlayerPawn
 		Player.DisplayName "Marine";
 		Player.CrouchSprite "PLYC";
 		Player.StartItem "MPPistol";
-		Player.StartItem "Fist";
+		Player.StartItem "DualFist";
 		Player.StartItem "Clip", 50;
-		Player.WeaponSlot 1, "Fist", "MPChainsaw";
+		Player.WeaponSlot 1, "DWFist", "MPChainsaw";
 		Player.WeaponSlot 2, "MPPistol";
 		Player.WeaponSlot 3, "MPShotgun", "MPSuperShotgun";
 		Player.WeaponSlot 4, "MPChaingun";

@@ -1,4 +1,3 @@
-// TODO: Weird ammo consumption while firing
 class DWWeapon : Weapon
 {
 	bool bDualWielded;
@@ -157,8 +156,10 @@ class DWWeapon : Weapon
 		return invoker.refire ? -1 : 0;
 	}
 	
-	override void DoEffect()
+	override void Tick()
 	{
+		super.Tick();
+		
 		weaponState = 0;
 	}
 	

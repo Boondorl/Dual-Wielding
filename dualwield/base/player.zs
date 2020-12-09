@@ -202,11 +202,10 @@ class DWPlayerPawn : PlayerPawn
 						do
 						{
 							if (--index < 0)
-							{
 								index = player.weapons.SlotSize(slot) - 1;
-								if (index == startIndex)
-									break;
-							}
+							
+							if (index == startIndex)
+								break;
 							
 							next = Weapon(FindInventory(player.weapons.GetWeapon(slot,index)));
 							if (next && !next.CheckAmmo(Weapon.EitherFire,false))
