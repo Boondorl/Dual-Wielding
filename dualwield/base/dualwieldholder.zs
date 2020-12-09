@@ -197,7 +197,10 @@ class DualWieldHolder : Weapon
 	override void DoEffect()
 	{
 		if (!owner || !owner.player)
+		{
 			Destroy();
+			return;
+		}
 			
 		if (holding[LEFT])
 		{
@@ -258,34 +261,32 @@ class DualWieldHolder : Weapon
 				}
 			}
 		}
-			
-		if (owner.player.ReadyWeapon == self)
+		
+		if (!holding[LEFT] || !holding[RIGHT])
 		{
-			// TODO: Also destroy silently when not the ReadyWeapon
-			if (!holding[LEFT] || !holding[RIGHT])
+			Weapon pending;
+			if (holding[RIGHT])
 			{
-				Weapon pending;
-				if (holding[RIGHT])
-				{
-					holding[RIGHT].bDualWielded = false;
-					pending = holding[RIGHT];
-				}
-				else if (holding[LEFT])
-				{
-					holding[LEFT].bDualWielded = false;
-					pending = holding[LEFT];
-				}
-				else
-					pending = owner.player.mo.BestWeapon(null);
-					
+				holding[RIGHT].bDualWielded = false;
+				pending = holding[RIGHT];
+			}
+			else if (holding[LEFT])
+			{
+				holding[LEFT].bDualWielded = false;
+				pending = holding[LEFT];
+			}
+			else
+				pending = owner.player.mo.BestWeapon(null);
+			
+			if (owner.player.ReadyWeapon == self)
 				owner.player.PendingWeapon = pending;
-				Destroy();
-			}
-			else if (owner.player.PendingWeapon != WP_NOCHANGE
-					&& !owner.player.FindPSprite(PSP_LEFTWEAPON) && !owner.player.FindPSprite(PSP_RIGHTWEAPON))
-			{
-				owner.player.mo.BringUpWeapon();
-			}
+			
+			Destroy();
+		}
+		else if (owner.player.ReadyWeapon == self && owner.player.PendingWeapon != WP_NOCHANGE
+				&& !owner.player.FindPSprite(PSP_LEFTWEAPON) && !owner.player.FindPSprite(PSP_RIGHTWEAPON))
+		{
+			owner.player.mo.BringUpWeapon();
 		}
 	}
 	

@@ -15,8 +15,8 @@ class DWDoomPlayer : DWPlayerPawn
 		Player.StartItem "Clip", 50;
 		Player.WeaponSlot 1, "Fist", "Chainsaw";
 		Player.WeaponSlot 2, "Pistol";
-		Player.WeaponSlot 3, "Shotgun", "SuperShotgun";
-		Player.WeaponSlot 4, "Chaingun";
+		Player.WeaponSlot 3, "Shotgun", "MPSuperShotgun";
+		Player.WeaponSlot 4, "MPChaingun";
 		Player.WeaponSlot 5, "RocketLauncher";
 		Player.WeaponSlot 6, "PlasmaRifle";
 		Player.WeaponSlot 7, "BFG9000";

@@ -1,6 +1,7 @@
-// TODO: Weapon switching
 class DWPlayerPawn : PlayerPawn
 {
+	private Weapon prevPending;
+	
 	override void FireWeapon(State stat)
 	{
 		let dwh = DualWieldHolder(player.ReadyWeapon);
@@ -164,9 +165,15 @@ class DWPlayerPawn : PlayerPawn
 	
 	void CheckPendingWeapon()
 	{
+		if (!prevPending)
+			prevPending = WP_NOCHANGE;
+			
 		let dwwpn = DWWeapon(player.PendingWeapon);
 		if (!dwwpn || !dwwpn.bDualWielded)
+		{
+			prevPending = player.PendingWeapon;
 			return;
+		}
 		
 		for (let probe = inv; probe; probe = probe.inv)
 		{
@@ -186,23 +193,19 @@ class DWPlayerPawn : PlayerPawn
 					bool found;
 					int slot;
 					[found, slot] = player.weapons.LocateWeapon(dwwpn.GetClass());
-					if (found && player.weapons.SlotSize(slot) > 2)
+					
+					let prev = PickPrevWeapon();
+					if (prev != holder)
 					{
-						let prev = PickPrevWeapon();
-						if (prev != holder)
-						{
-							int prevSlot;
-							[found, prevSlot] = player.weapons.LocateWeapon(prev.GetClass());
-							if (found && prevSlot == slot)
-								player.PendingWeapon = prev;
-							else
-								player.PendingWeapon = WP_NOCHANGE;
-						}
+						int prevSlot;
+						[found, prevSlot] = player.weapons.LocateWeapon(prev.GetClass());
+						if (found && prevSlot == slot)
+							player.PendingWeapon = prev;
 						else
-							player.PendingWeapon = WP_NOCHANGE;
+							player.PendingWeapon = prevPending;
 					}
 					else
-						player.PendingWeapon = WP_NOCHANGE;
+						player.PendingWeapon = prevPending;
 				}
 			}
 			else
@@ -210,6 +213,8 @@ class DWPlayerPawn : PlayerPawn
 						
 			break;
 		}
+		
+		prevPending = player.PendingWeapon;
 	}
 	
 	void ModifyWeaponState()
