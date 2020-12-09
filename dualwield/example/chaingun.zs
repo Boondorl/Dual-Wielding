@@ -3,7 +3,6 @@ class MPChaingun : MPWeapon replaces Chaingun
 	Default
 	{
 		Weapon.SelectionOrder 700;
-		Weapon.SlotNumber 4;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 20;
 		Weapon.AmmoType "Clip";

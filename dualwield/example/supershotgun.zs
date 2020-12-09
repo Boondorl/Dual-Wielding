@@ -3,7 +3,6 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 	Default
 	{
 		Weapon.SelectionOrder 400;
-		Weapon.SlotNumber 3;
 		Weapon.AmmoUse 2;
 		Weapon.AmmoGive 8;
 		Weapon.AmmoType "Shell";
@@ -25,7 +24,7 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 		RightReady:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
 			SHT2 A 1 A_DualWeaponReady;
-			Loop;
+			Wait;
 			
 		Deselect:
 			SHT2 A 1 A_Lower;

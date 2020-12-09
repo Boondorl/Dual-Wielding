@@ -191,16 +191,30 @@ class DWPlayerPawn : PlayerPawn
 				else
 				{
 					bool found;
-					int slot;
-					[found, slot] = player.weapons.LocateWeapon(dwwpn.GetClass());
+					int slot, startIndex;
+					[found, slot, startIndex] = player.weapons.LocateWeapon(dwwpn.GetClass());
 					
-					let prev = PickPrevWeapon();
-					if (prev != holder)
+					if (found)
 					{
-						int prevSlot;
-						[found, prevSlot] = player.weapons.LocateWeapon(prev.GetClass());
-						if (found && prevSlot == slot)
-							player.PendingWeapon = prev;
+						Weapon next;
+						int index = startIndex;
+						
+						do
+						{
+							if (--index < 0)
+							{
+								index = player.weapons.SlotSize(slot) - 1;
+								if (index == startIndex)
+									break;
+							}
+							
+							next = Weapon(FindInventory(player.weapons.GetWeapon(slot,index)));
+							if (next && !next.CheckAmmo(Weapon.EitherFire,false))
+								next = null;
+						} while (!next);
+						
+						if (next)
+							player.PendingWeapon = next;
 						else
 							player.PendingWeapon = prevPending;
 					}

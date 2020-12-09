@@ -7,5 +7,7 @@ version "4.5"
 
 #include "dualwield/example/doomplayer.zs"
 #include "dualwield/example/manualpickup.zs"
-#include "dualwield/example/chaingun.zs"
+#include "dualwield/example/pistol.zs"
+#include "dualwield/example/shotgun.zs"
 #include "dualwield/example/supershotgun.zs"
+#include "dualwield/example/chaingun.zs"

@@ -2,7 +2,7 @@ class MPWeapon : DWWeapon
 {
 	override void Touch(Actor toucher)
 	{
-		if (toucher.player && !(toucher.player.cmd.buttons & BT_USER1))
+		if (toucher.player && !(toucher.player.cmd.buttons & (BT_USER1|BT_USER2)))
 			return;
 			
 		super.Touch(toucher);
@@ -12,10 +12,12 @@ class MPWeapon : DWWeapon
 	{
 		if (!(item is GetClass()))
 			return false;
-			
-		let wpn = DWWeapon(owner.FindInventory(item.GetClass()));
-		if (!wpn || (self == owner.player.ReadyWeapon && !bDualWielded))
+		
+		if (owner.player && (owner.player.cmd.buttons & BT_USER2)
+			&& self == owner.player.ReadyWeapon && !bDualWielded)
+		{
 			return false;
+		}
 		
 		return super.HandlePickup(item);
 	}
@@ -24,7 +26,7 @@ class MPWeapon : DWWeapon
 	{
 		super.AttachToOwner(other);
 		
-		if (!owner || !owner.player)
+		if (!owner || !owner.player || !(owner.player.cmd.buttons & BT_USER2))
 			return;
 		
 		let wpn = DWWeapon(owner.player.ReadyWeapon);
@@ -35,8 +37,16 @@ class MPWeapon : DWWeapon
 			{
 				holder.AttachToOwner(owner);
 				
-				holder.holding[RIGHT] = DWWeapon(self);
-				holder.holding[LEFT] = wpn;
+				if (wpn.GetClass() == GetClass())
+				{
+					holder.holding[RIGHT] = DWWeapon(self);
+					holder.holding[LEFT] = wpn;
+				}
+				else
+				{
+					holder.holding[RIGHT] = wpn;
+					holder.holding[LEFT] = DWWeapon(self);
+				}
 				
 				wpn.bDualWielded = true;
 				bDualWielded = true;
