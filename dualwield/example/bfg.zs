@@ -2,7 +2,7 @@ class MPBFG9000 : MPWeapon replaces BFG9000
 {
 	Default
 	{
-		Height 20;
+		Weapon.Kickback 100
 		Weapon.SelectionOrder 2800;
 		Weapon.AmmoUse 40;
 		Weapon.AmmoGive 40;
@@ -44,21 +44,21 @@ class MPBFG9000 : MPWeapon replaces BFG9000
 			Loop;
 			
 		Fire:
-			BFGG A 20 A_BFGSound;
+			BFGG A 20 A_StartSound("weapons/bfgf", CHAN_WEAPON, CHANF_OVERLAP);
 			BFGG B 10 A_GunFlash;
 			BFGG B 10 A_FireBFG;
 			BFGG B 20 A_ReFire;
 			Goto Ready;
 			
 		LeftFire:
-			BFGG A 20 A_BFGSound;
+			BFGG A 20 A_StartSound("weapons/bfgf", CHAN_WEAPON, CHANF_OVERLAP);
 			BFGG B 10 A_DualGunFlash;
 			BFGG B 10 A_FireBFG;
 			BFGG B 20 A_DualReFire;
 			Goto LeftReady;
 			
 		RightFire:
-			BFGG A 20 A_BFGSound;
+			BFGG A 20 A_StartSound("weapons/bfgf", CHAN_WEAPON, CHANF_OVERLAP);
 			BFGG B 10 A_DualGunFlash;
 			BFGG B 10 A_FireBFG;
 			BFGG B 20 A_DualReFire;

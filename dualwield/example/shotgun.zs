@@ -2,6 +2,7 @@ class MPShotgun : MPWeapon replaces Shotgun
 {
 	Default
 	{
+		Weapon.Kickback 100
 		Weapon.SelectionOrder 1300;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 8;
@@ -53,7 +54,9 @@ class MPShotgun : MPWeapon replaces Shotgun
 			Wait;
 			
 		Fire:
-			SHTG A 7 A_FireShotgun;
+			SHTG A 0 A_FireBullets(5.6, 0, 7, 5);
+			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON, CHANF_OVERLAP);
+			SHTG A 7 A_GunFlash;
 			SHTG BC 5;
 			SHTG D 4;
 			SHTG CB 5;
@@ -62,7 +65,7 @@ class MPShotgun : MPWeapon replaces Shotgun
 			
 		LeftFire:
 			SHTG A 0 A_FireBullets(5.6, 0, 7, 5);
-			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON);
+			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHTG A 7 A_DualGunFlash;
 			SHTG AAAAAA 1 A_OverlayOffset(OverlayID(),0,16, WOF_ADD);
 			TNT1 A 21;
@@ -73,7 +76,7 @@ class MPShotgun : MPWeapon replaces Shotgun
 		RightFire:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
 			SHTG A 0 A_FireBullets(5.6, 0, 7, 5);
-			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON);
+			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHTG A 7 A_DualGunFlash;
 			SHTG AAAAAA 1 A_OverlayOffset(OverlayID(),0,16, WOF_ADD);
 			TNT1 A 21;

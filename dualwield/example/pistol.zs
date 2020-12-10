@@ -2,6 +2,7 @@ class MPPistol : MPWeapon replaces Pistol
 {
 	Default
 	{
+		Weapon.Kickback 100
 		Weapon.SelectionOrder 1900;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 20;

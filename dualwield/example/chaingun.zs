@@ -2,6 +2,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 {
 	Default
 	{
+		Weapon.Kickback 100
 		Weapon.SelectionOrder 700;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 20;
@@ -46,7 +47,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 			Wait;
 			
 		Fire:
-			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
+			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON, CHANF_OVERLAP);
 			TNT1 A 0 A_GunFlash;
 			CHGG A 2 A_FireBullets(5.6,0,-1,5);
 			CHGG B 2;
@@ -54,7 +55,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 			Goto Ready;
 			
 		LeftFire:
-			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
+			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON, CHANF_OVERLAP);
 			TNT1 A 0 A_DualGunFlash;
 			CHGG A 2 A_FireBullets(8.4,0,-1,5);
 			CHGG B 2;
@@ -62,7 +63,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 			Goto LeftReady;
 			
 		RightFire:
-			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON);
+			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON, CHANF_OVERLAP);
 			TNT1 A 0 A_DualGunFlash;
 			CHGG A 2 A_FireBullets(8.4,0,-1,5);
 			CHGG B 2;

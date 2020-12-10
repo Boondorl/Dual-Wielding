@@ -2,6 +2,7 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 {
 	Default
 	{
+		Weapon.Kickback 100
 		Weapon.SelectionOrder 400;
 		Weapon.AmmoUse 2;
 		Weapon.AmmoGive 8;
@@ -54,27 +55,29 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 			Wait;
 			
 		Fire:
-			SHT2 A 7 A_FireShotgun2;
+			SHT2 A 0 A_FireBullets(11.2, 7.1, 20, 5);
+			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON, CHANF_OVERLAP);
+			SHT2 A 7 A_GunFlash;
 			SHT2 B 7;
 			SHT2 C 7 A_CheckReload;
-			SHT2 D 7 A_OpenShotgun2;
+			SHT2 D 7 A_StartSound("weapons/sshoto", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 E 7;
-			SHT2 F 7 A_LoadShotgun2;
+			SHT2 F 7 A_StartSound("weapons/sshotl", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 G 6;
-			SHT2 H 6 A_StartSound("weapons/sshotc", CHAN_WEAPON);
+			SHT2 H 6 A_StartSound("weapons/sshotc", CHAN_WEAPON, CHANF_OVERLAP);
 			TNT1 A 0 A_ReFire;
 			Goto Ready;
 			
 		LeftFire:
 			SHT2 A 0 A_FireBullets(11.2, 7.1, 20, 5);
-			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON);
+			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 A 7 A_DualGunFlash;
 			SHT2 B 7;
 			TNT1 A 0 A_DualCheckReload;
 			SHT2 AAAAAA 1 A_OverlayOffset(OverlayID(),0,16, WOF_ADD);
-			TNT1 A 21 A_OpenShotgun2;
-			TNT1 A 19 A_LoadShotgun2;
-			TNT1 A 0 A_StartSound("weapons/sshotc", CHAN_WEAPON);
+			TNT1 A 21 A_StartSound("weapons/sshoto", CHAN_WEAPON, CHANF_OVERLAP);
+			TNT1 A 19 A_StartSound("weapons/sshotl", CHAN_WEAPON, CHANF_OVERLAP);
+			TNT1 A 0 A_StartSound("weapons/sshotc", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 AAAAAA 1 A_OverlayOffset(OverlayID(),0,-16, WOF_ADD);
 			TNT1 A 0 A_DualReFire;
 			Goto LeftReady;
@@ -82,14 +85,14 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 		RightFire:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
 			SHT2 A 0 A_FireBullets(11.2, 7.1, 20, 5);
-			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON);
+			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 A 7 A_DualGunFlash;
 			SHT2 B 7;
 			TNT1 A 0 A_DualCheckReload;
 			SHT2 AAAAAA 1 A_OverlayOffset(OverlayID(),0,16, WOF_ADD);
-			TNT1 A 21 A_OpenShotgun2;
-			TNT1 A 19 A_LoadShotgun2;
-			TNT1 A 0 A_StartSound("weapons/sshotc", CHAN_WEAPON);
+			TNT1 A 21 A_StartSound("weapons/sshoto", CHAN_WEAPON, CHANF_OVERLAP);
+			TNT1 A 19 A_StartSound("weapons/sshotl", CHAN_WEAPON, CHANF_OVERLAP);
+			TNT1 A 0 A_StartSound("weapons/sshotc", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 AAAAAA 1 A_OverlayOffset(OverlayID(),0,-16, WOF_ADD);
 			TNT1 A 0 A_DualReFire;
 			Goto RightReady;

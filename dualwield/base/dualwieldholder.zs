@@ -1,3 +1,4 @@
+// TODO: Weapon kickback
 class DualWieldHolder : Weapon
 {
 	DWWeapon holding[2];
@@ -188,11 +189,11 @@ class DualWieldHolder : Weapon
 	{
 		let left = holding[LEFT];
 		if (left && left.upSound)
-			origin.A_StartSound(left.upSound, CHAN_WEAPON);
+			origin.A_StartSound(left.upSound, CHAN_WEAPON, CHANF_OVERLAP);
 			
 		let right = holding[RIGHT];
 		if (right && right.upSound)
-			origin.A_StartSound(right.upSound, CHAN_WEAPON);
+			origin.A_StartSound(right.upSound, CHAN_WEAPON, CHANF_OVERLAP);
 	}
 	
 	override bool DepleteAmmo(bool altFire, bool checkEnough, int ammouse)

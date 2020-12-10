@@ -2,6 +2,7 @@ class MPRocketLauncher : MPWeapon replaces RocketLauncher
 {
 	Default
 	{
+		Weapon.Kickback 100
 		Weapon.SelectionOrder 2500;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 2;
