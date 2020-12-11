@@ -154,7 +154,8 @@ class DWWeapon : Weapon
 		if (player.playerstate == PST_DEAD)
 		{
 			player.SetPSprite(OverlayID() == PSP_LEFTWEAPON ? PSP_LEFTFLASH : PSP_RIGHTFLASH, null);
-			psp.SetState(invoker.FindState('DeadLowered'));
+			State st = OverlayID() == PSP_LEFTWEAPON ? invoker.FindState("LeftDeadLowered") : invoker.FindState("RightDeadLowered");
+			psp.SetState(st);
 			return;
 		}
 		
