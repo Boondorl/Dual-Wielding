@@ -53,14 +53,14 @@ class MPBFG9000 : MPWeapon replaces BFG9000
 		LeftFire:
 			BFGG A 20 A_StartSound("weapons/bfgf", CHAN_WEAPON, CHANF_OVERLAP);
 			BFGG B 10 A_DualGunFlash;
-			BFGG B 10 A_FireBFG;
+			BFGG B 10 A_DualFireProjectile("BFGBall");
 			BFGG B 20 A_DualReFire;
 			Goto LeftReady;
 			
 		RightFire:
 			BFGG A 20 A_StartSound("weapons/bfgf", CHAN_WEAPON, CHANF_OVERLAP);
 			BFGG B 10 A_DualGunFlash;
-			BFGG B 10 A_FireBFG;
+			BFGG B 10 A_DualFireProjectile("BFGBall");
 			BFGG B 20 A_DualReFire;
 			Goto RightReady;
 			

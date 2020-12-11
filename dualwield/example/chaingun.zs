@@ -57,7 +57,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 		LeftFire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON, CHANF_OVERLAP);
 			TNT1 A 0 A_DualGunFlash;
-			CHGG A 2 A_FireBullets(8.4,0,-1,5);
+			CHGG A 2 A_DualFireBullets(8.4,0,-1,5);
 			CHGG B 2;
 			CHGG B 0 A_DualReFire;
 			Goto LeftReady;
@@ -65,7 +65,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 		RightFire:
 			TNT1 A 0 A_StartSound("weapons/chngun", CHAN_WEAPON, CHANF_OVERLAP);
 			TNT1 A 0 A_DualGunFlash;
-			CHGG A 2 A_FireBullets(8.4,0,-1,5);
+			CHGG A 2 A_DualFireBullets(8.4,0,-1,5);
 			CHGG B 2;
 			CHGG B 0 A_DualReFire;
 			Goto RightReady;

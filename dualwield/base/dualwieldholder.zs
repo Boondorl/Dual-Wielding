@@ -6,9 +6,7 @@ struct DualWeaponInfo play
 	int bobStyle;
 	double bobSpeed;
 	double bobRangeX, bobRangeY;
-	double FOVScale;
 	double lookScale;
-	int crosshair;
 	
 	bool bDontBob;
 	bool bAxeBlood;
@@ -23,9 +21,7 @@ struct DualWeaponInfo play
 		bobStyle = Bob_Normal;
 		bobSpeed = 1;
 		bobRangeX = bobRangeY = 1;
-		FOVScale = 1;
 		lookScale = 1;
-		crosshair = 0;
 		
 		bDontBob = bAxeBlood = bStaffKickback = bNoAutoAim = false;
 	}
@@ -42,9 +38,7 @@ struct DualWeaponInfo play
 			bobSpeed = right.bobSpeed;
 			bobRangeX = right.bobRangeX;
 			bobRangeY = right.bobRangeY;
-			FOVScale = right.FOVScale;
 			lookScale = right.lookScale;
-			crosshair = right.crosshair;
 			
 			bDontBob = right.bDontBob;
 			bAxeBlood = right.bAxeBlood;
@@ -64,9 +58,7 @@ struct DualWeaponInfo play
 				bobSpeed = left.bobSpeed;
 				bobRangeX = left.bobRangeX;
 				bobRangeY = left.bobRangeY;
-				FOVScale = left.FOVScale;
 				lookScale = left.lookScale;
-				crosshair = left.crosshair;
 				
 				bDontBob = left.bDontBob;
 				bAxeBlood = left.bAxeBlood;
@@ -109,9 +101,7 @@ struct DualWeaponInfo play
 		weap.bobSpeed = bobSpeed;
 		weap.bobRangeX = bobRangeX;
 		weap.bobRangeY = bobRangeY;
-		weap.FOVScale = FOVScale;
 		weap.lookScale = lookScale;
-		weap.crosshair = crosshair;
 		
 		weap.bDontBob = bDontBob;
 		weap.bAxeBlood = bAxeBlood;

@@ -69,7 +69,7 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 			Goto Ready;
 			
 		LeftFire:
-			SHT2 A 0 A_FireBullets(11.2, 7.1, 20, 5);
+			SHT2 A 0 A_DualFireBullets(11.2, 7.1, 20, 5);
 			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 A 7 A_DualGunFlash;
 			SHT2 B 7;
@@ -84,7 +84,7 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 			
 		RightFire:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
-			SHT2 A 0 A_FireBullets(11.2, 7.1, 20, 5);
+			SHT2 A 0 A_DualFireBullets(11.2, 7.1, 20, 5);
 			SHT2 A 0 A_StartSound("weapons/sshotf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHT2 A 7 A_DualGunFlash;
 			SHT2 B 7;

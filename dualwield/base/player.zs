@@ -12,13 +12,12 @@ class DWPlayerPawn : PlayerPawn
 		}
 			
 		let wpn = dwh.holding[LEFT];
-		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false) || !wpn.DepleteAmmo(false))
+		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false))
 			return;
 
 		wpn.weaponState &= ~WF_WEAPONBOBBING;
 		PlayAttacking();
 		wpn.bAltFire = false;
-		dwh.bAltFire = false;
 		if (!stat)
 			stat = wpn.GetLeftAtkState(!!player.refire);
 		
@@ -44,13 +43,12 @@ class DWPlayerPawn : PlayerPawn
 		}
 			
 		let wpn = dwh.holding[RIGHT];
-		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false) || !wpn.DepleteAmmo(false))
+		if (!wpn || !wpn.CheckAmmo(Weapon.PrimaryFire,false))
 			return;
 
 		wpn.weaponState &= ~WF_WEAPONBOBBING;
 		PlayAttacking();
 		wpn.bAltFire = false;
-		dwh.bAltFire = true;
 		if (!stat)
 			stat = wpn.GetRightAtkState(!!player.refire);
 		

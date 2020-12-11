@@ -64,7 +64,7 @@ class MPShotgun : MPWeapon replaces Shotgun
 			Goto Ready;
 			
 		LeftFire:
-			SHTG A 0 A_FireBullets(5.6, 0, 7, 5);
+			SHTG A 0 A_DualFireBullets(5.6, 0, 7, 5);
 			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHTG A 7 A_DualGunFlash;
 			SHTG AAAAAA 1 A_OverlayOffset(OverlayID(),0,16, WOF_ADD);
@@ -75,7 +75,7 @@ class MPShotgun : MPWeapon replaces Shotgun
 			
 		RightFire:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
-			SHTG A 0 A_FireBullets(5.6, 0, 7, 5);
+			SHTG A 0 A_DualFireBullets(5.6, 0, 7, 5);
 			SHTG A 0 A_StartSound("weapons/shotgf", CHAN_WEAPON, CHANF_OVERLAP);
 			SHTG A 7 A_DualGunFlash;
 			SHTG AAAAAA 1 A_OverlayOffset(OverlayID(),0,16, WOF_ADD);

@@ -50,13 +50,13 @@ class MPPlasmaRifle : MPWeapon replaces PlasmaRifle
 			Goto Ready;
 			
 		LeftFire:
-			TNT1 A 0 A_FireProjectile("PlasmaBall");
+			TNT1 A 0 A_DualFireProjectile("PlasmaBall");
 			PLSG A 3 A_DualGunFlash;
 			TNT1 A 0 A_DualReFire;
 			Goto LeftReady;
 			
 		RightFire:
-			TNT1 A 0 A_FireProjectile("PlasmaBall");
+			TNT1 A 0 A_DualFireProjectile("PlasmaBall");
 			PLSG A 3 A_DualGunFlash;
 			TNT1 A 0 A_DualReFire;
 			Goto RightReady;

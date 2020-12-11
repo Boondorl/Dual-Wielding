@@ -51,13 +51,13 @@ class MPRocketLauncher : MPWeapon replaces RocketLauncher
 			
 		LeftFire:
 			MISG B 8 A_DualGunFlash;
-			MISG B 12 A_FireMissile;
+			MISG B 12 A_DualFireProjectile("Rocket");
 			MISG B 0 A_DualReFire;
 			Goto LeftReady;
 			
 		RightFire:
 			MISG B 8 A_DualGunFlash;
-			MISG B 12 A_FireMissile;
+			MISG B 12 A_DualFireProjectile("Rocket");
 			MISG B 0 A_DualReFire;
 			Goto RightReady;
 			
