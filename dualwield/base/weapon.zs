@@ -11,6 +11,17 @@ class DWWeapon : Weapon
 		A_WeaponReady(flags);
 		invoker.weaponState = player.WeaponState;
 		player.WeaponState = prevState;
+		
+		if ((flags & WRF_NOFIRE) != WRF_NOFIRE)
+		{
+			let psp = player.FindPSprite(OverlayID());
+			State st = OverlayID() == PSP_LEFTWEAPON ? invoker.FindState("LeftReady") : invoker.FindState("RightReady");
+			if (invoker.ReadySound && psp && psp.curState == st
+				&& (!invoker.bReadySndHalf || random[WpnReadySnd]() < 128))
+			{
+				player.mo.A_StartSound(invoker.ReadySound, CHAN_WEAPON, CHANF_OVERLAP);
+			}
+		}
 	}
 	
 	action void A_DualReFire(StateLabel sl = null)
@@ -149,6 +160,12 @@ class DWWeapon : Weapon
 		
 		player.SetPSprite(OverlayID() == PSP_LEFTWEAPON ? PSP_LEFTFLASH : PSP_RIGHTFLASH, null);
 		psp.Destroy();
+	}
+	
+	action void SetKickback(int amt)
+	{
+		if (amt >= 0)
+			invoker.kickback = amt;
 	}
 	
 	action int GetAccuracy()

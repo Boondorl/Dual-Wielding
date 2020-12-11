@@ -2,7 +2,7 @@ class MPBFG9000 : MPWeapon replaces BFG9000
 {
 	Default
 	{
-		Weapon.Kickback 100
+		Weapon.Kickback 100;
 		Weapon.SelectionOrder 2800;
 		Weapon.AmmoUse 40;
 		Weapon.AmmoGive 40;

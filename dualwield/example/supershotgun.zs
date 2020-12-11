@@ -2,7 +2,7 @@ class MPSuperShotgun : MPWeapon replaces SuperShotgun
 {
 	Default
 	{
-		Weapon.Kickback 100
+		Weapon.Kickback 100;
 		Weapon.SelectionOrder 400;
 		Weapon.AmmoUse 2;
 		Weapon.AmmoGive 8;

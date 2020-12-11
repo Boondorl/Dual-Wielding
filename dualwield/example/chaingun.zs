@@ -2,7 +2,7 @@ class MPChaingun : MPWeapon replaces Chaingun
 {
 	Default
 	{
-		Weapon.Kickback 100
+		Weapon.Kickback 100;
 		Weapon.SelectionOrder 700;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 20;

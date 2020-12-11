@@ -21,12 +21,10 @@ class MPChainsaw : MPWeapon replaces Chainsaw
 			
 		LeftReady:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
-			TNT1 A 0 A_StartSound(invoker.ReadySound, CHAN_WEAPON);
 			SAWG CCCCDDDD 1 A_DualWeaponReady;
 			Loop;
 			
 		RightReady:
-			TNT1 A 0 A_StartSound(invoker.ReadySound, CHAN_WEAPON);
 			SAWG CCCCDDDD 1 A_DualWeaponReady;
 			Loop;
 			

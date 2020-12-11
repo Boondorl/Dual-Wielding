@@ -2,7 +2,7 @@ class MPPlasmaRifle : MPWeapon replaces PlasmaRifle
 {
 	Default
 	{
-		Weapon.Kickback 100
+		Weapon.Kickback 100;
 		Weapon.SelectionOrder 100;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 40;

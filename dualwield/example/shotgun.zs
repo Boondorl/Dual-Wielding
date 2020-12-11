@@ -2,7 +2,7 @@ class MPShotgun : MPWeapon replaces Shotgun
 {
 	Default
 	{
-		Weapon.Kickback 100
+		Weapon.Kickback 100;
 		Weapon.SelectionOrder 1300;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 8;

@@ -2,7 +2,7 @@ class MPPistol : MPWeapon replaces Pistol
 {
 	Default
 	{
-		Weapon.Kickback 100
+		Weapon.Kickback 100;
 		Weapon.SelectionOrder 1900;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoGive 20;
@@ -54,7 +54,9 @@ class MPPistol : MPWeapon replaces Pistol
 			Wait;
 			
 		Fire:
-			PISG B 6 A_FirePistol;
+			TNT1 A 0 A_FireBullets(5.6, 0, GetAccuracy(), 5);
+			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP);
+			PISG B 6 A_GunFlash;
 			PISG C 4;
 			PISG B 5;
 			TNT1 A 0 A_ReFire;
@@ -62,7 +64,7 @@ class MPPistol : MPWeapon replaces Pistol
 			
 		LeftFire:
 			TNT1 A 0 A_FireBullets(8.4, 0, GetAccuracy(), 5);
-			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON);
+			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP);
 			PISG B 6 A_DualGunFlash;
 			PISG C 4;
 			PISG B 5;
@@ -72,7 +74,7 @@ class MPPistol : MPWeapon replaces Pistol
 		RightFire:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
 			TNT1 A 0 A_FireBullets(8.4, 0, GetAccuracy(), 5);
-			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON);
+			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP);
 			PISG B 6 A_DualGunFlash;
 			PISG C 4;
 			PISG B 5;

@@ -1,8 +1,130 @@
-// TODO: Weapon kickback
+struct DualWeaponInfo play
+{
+	int kickback;
+	double yAdjust;
+	Ammo Ammo1, Ammo2;
+	int bobStyle;
+	double bobSpeed;
+	double bobRangeX, bobRangeY;
+	double FOVScale;
+	double lookScale;
+	int crosshair;
+	
+	bool bDontBob;
+	bool bAxeBlood;
+	bool bStaffKickback;
+	bool bNoAutoAim;
+	
+	void Reset()
+	{
+		kickback = 0;
+		yAdjust = 0;
+		Ammo1 = Ammo2 = null;
+		bobStyle = Bob_Normal;
+		bobSpeed = 1;
+		bobRangeX = bobRangeY = 1;
+		FOVScale = 1;
+		lookScale = 1;
+		crosshair = 0;
+		
+		bDontBob = bAxeBlood = bStaffKickback = bNoAutoAim = false;
+	}
+	
+	void UpdateWeaponInfo(Weapon left, Weapon right)
+	{
+		bool hadRight = right != null;
+		int lKick, rKick;
+		double lYAdjust, rYAdjust;
+		
+		if (right)
+		{
+			bobStyle = right.bobStyle;
+			bobSpeed = right.bobSpeed;
+			bobRangeX = right.bobRangeX;
+			bobRangeY = right.bobRangeY;
+			FOVScale = right.FOVScale;
+			lookScale = right.lookScale;
+			crosshair = right.crosshair;
+			
+			bDontBob = right.bDontBob;
+			bAxeBlood = right.bAxeBlood;
+			bStaffKickback = right.bStaff2_Kickback;
+			bNoAutoAim = right.bNoAutoAim;
+			
+			rKick = right.kickback;
+			rYAdjust = right.yAdjust;
+			Ammo1 = right.Ammo1;
+		}
+		
+		if (left)
+		{
+			if (!hadRight)
+			{
+				bobStyle = left.bobStyle;
+				bobSpeed = left.bobSpeed;
+				bobRangeX = left.bobRangeX;
+				bobRangeY = left.bobRangeY;
+				FOVScale = left.FOVScale;
+				lookScale = left.lookScale;
+				crosshair = left.crosshair;
+				
+				bDontBob = left.bDontBob;
+				bAxeBlood = left.bAxeBlood;
+				bStaffKickback = left.bStaff2_Kickback;
+				bNoAutoAim = left.bNoAutoAim;
+			}
+			
+			lKick = left.kickback;
+			lYAdjust = left.yAdjust;
+			Ammo2 = left.Ammo1;
+		}
+		
+		if (left && right)
+		{
+			kickback = min(lKick, rKick);
+			yAdjust = max(lYAdjust, rYAdjust);
+		}
+		else if (left)
+		{
+			kickback = lKick;
+			yAdjust = lYAdjust;
+		}
+		else if (right)
+		{
+			kickback = rKick;
+			yAdjust = rYAdjust;
+		}
+	}
+	
+	void SetWeaponInfo(Weapon weap)
+	{
+		if (!weap)
+			return;
+			
+		weap.kickback = kickback;
+		weap.yAdjust = yAdjust;
+		weap.Ammo1 = Ammo1;
+		weap.Ammo2 = Ammo2;
+		weap.bobStyle = bobStyle;
+		weap.bobSpeed = bobSpeed;
+		weap.bobRangeX = bobRangeX;
+		weap.bobRangeY = bobRangeY;
+		weap.FOVScale = FOVScale;
+		weap.lookScale = lookScale;
+		weap.crosshair = crosshair;
+		
+		weap.bDontBob = bDontBob;
+		weap.bAxeBlood = bAxeBlood;
+		weap.bStaff2_Kickback = bStaffKickback;
+		weap.bNoAutoAim = bNoAutoAim;
+	}
+}
+
 class DualWieldHolder : Weapon
 {
 	DWWeapon holding[2];
 	bool bSwapWeapons;
+	DualWeaponInfo weapInfo;
 	
 	Default
 	{
@@ -213,7 +335,7 @@ class DualWieldHolder : Weapon
 			Destroy();
 			return;
 		}
-			
+		
 		if (holding[LEFT])
 		{
 			if (!holding[LEFT].owner)
@@ -229,8 +351,6 @@ class DualWieldHolder : Weapon
 			}
 			else
 			{
-				Ammo1 = holding[LEFT].Ammo1;
-				
 				if (owner.player.ReadyWeapon == self)
 				{
 					let psp = owner.player.FindPSprite(PSP_LEFTWEAPON);
@@ -259,8 +379,6 @@ class DualWieldHolder : Weapon
 			}
 			else
 			{
-				Ammo2 = holding[RIGHT].Ammo1;
-				
 				if (owner.player.ReadyWeapon == self)
 				{
 					let psp = owner.player.FindPSprite(PSP_RIGHTWEAPON);
@@ -294,12 +412,18 @@ class DualWieldHolder : Weapon
 				owner.player.PendingWeapon = pending;
 			
 			Destroy();
+			return;
 		}
 		else if (owner.player.ReadyWeapon == self && owner.player.PendingWeapon != WP_NOCHANGE
 				&& !owner.player.FindPSprite(PSP_LEFTWEAPON) && !owner.player.FindPSprite(PSP_RIGHTWEAPON))
 		{
 			owner.player.mo.BringUpWeapon();
+			return;
 		}
+		
+		weapInfo.Reset();
+		weapInfo.UpdateWeaponInfo(holding[LEFT], holding[RIGHT]);
+		weapInfo.SetWeaponInfo(self);
 	}
 	
 	override void Tick() {}
