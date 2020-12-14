@@ -233,12 +233,24 @@ class DWPlayerPawn : PlayerPawn
 		let dwh = DualWieldHolder(player.ReadyWeapon);
 		if (!dwh)
 			return;
+		
+		let left = dwh.holding[LEFT];
+		let right = dwh.holding[RIGHT];
+		int newState;
+		if (left && right)
+		{
+			newState = left.weaponState | right.weaponState;
+			if (!(left.weaponState & WF_WEAPONSWITCHOK) || !(right.weaponState & WF_WEAPONSWITCHOK))
+				newState &= ~WF_WEAPONSWITCHOK;
+				
+			newState &= ~WF_REFIRESWITCHOK;
+		}
+		else if (right)
+			newState = right.weaponState;
+		else if (left)
+			newState = left.weaponState;
 			
-		int state1 = dwh.holding[LEFT] ? dwh.holding[LEFT].weaponState : 0;
-		int state2 = dwh.holding[RIGHT] ? dwh.holding[RIGHT].weaponState : 0;
-		int newState = state1 | state2;
-		if (!(state1 & WF_WEAPONSWITCHOK) || !(state2 & WF_WEAPONSWITCHOK))
-			newState &= ~WF_WEAPONSWITCHOK;
+		newState &= ~(WF_WEAPONREADYALT|WF_USER1OK|WF_USER2OK|WF_USER3OK|WF_USER4OK);
 			
 		player.WeaponState = newState;
 	}
@@ -267,7 +279,7 @@ class DWPlayerPawn : PlayerPawn
 				wpn.holding[LEFT].attackdown = false;
 		}
 		
-		if (state2 & WF_WEAPONREADYALT)
+		if (state2 & WF_WEAPONREADY)
 		{
 			if (player.cmd.buttons & BT_ALTATTACK)
 			{

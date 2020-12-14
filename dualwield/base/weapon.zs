@@ -198,11 +198,14 @@ class DWWeapon : Weapon
 	action void A_DualFireBullets(double spread_xy, double spread_z, int numbullets, int damageperbullet, class<Actor> pufftype = "BulletPuff", int flags = 1, double range = 0, class<Actor> missile = null, double Spawnheight = 32, double Spawnofs_xy = 0)
 	{
 		let rw = player.ReadyWeapon;
+		int rf = player.refire;
 		player.ReadyWeapon = invoker;
+		player.refire = invoker.refire;
 		
 		A_FireBullets(spread_xy, spread_z, numbullets, damageperbullet, pufftype, flags, range, missile, Spawnheight, Spawnofs_xy);
 		
 		player.ReadyWeapon = rw;
+		player.refire = rf;
 	}
 	
 	action Actor A_DualFireProjectile(class<Actor> missiletype, double angle = 0, bool useammo = true, double spawnofs_xy = 0, double spawnheight = 0, int flags = 0, double pitch = 0)
@@ -211,6 +214,8 @@ class DWWeapon : Weapon
 		player.ReadyWeapon = invoker;
 		
 		let missile = A_FireProjectile(missiletype, angle, useammo, spawnofs_xy, spawnheight, flags, pitch);
+		if (missile && !missile.projectileKickback)
+			missile.projectileKickback = invoker.kickback;
 		
 		player.ReadyWeapon = rw;
 		return missile;
@@ -234,11 +239,6 @@ class DWWeapon : Weapon
 		A_RailAttack(damage, spawnofs_xy, useammo, color1, color2, flags, maxdiff, pufftype, spread_xy, spread_z, range, duration, sparsity, driftspeed, spawnclass, spawnofs_z, spiraloffset, limit);
 		
 		player.ReadyWeapon = rw;
-	}
-	
-	action int GetAccuracy()
-	{
-		return invoker.refire ? -1 : 0;
 	}
 	
 	override void Tick()

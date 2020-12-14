@@ -1,6 +1,5 @@
 struct DualWeaponInfo play
 {
-	int kickback;
 	double yAdjust;
 	Ammo Ammo1, Ammo2;
 	int bobStyle;
@@ -9,13 +8,9 @@ struct DualWeaponInfo play
 	double lookScale;
 	
 	bool bDontBob;
-	bool bAxeBlood;
-	bool bStaffKickback;
-	bool bNoAutoAim;
 	
 	void Reset()
 	{
-		kickback = 0;
 		yAdjust = 0;
 		Ammo1 = Ammo2 = null;
 		bobStyle = Bob_Normal;
@@ -23,13 +18,12 @@ struct DualWeaponInfo play
 		bobRangeX = bobRangeY = 1;
 		lookScale = 1;
 		
-		bDontBob = bAxeBlood = bStaffKickback = bNoAutoAim = false;
+		bDontBob = false;
 	}
 	
 	void UpdateWeaponInfo(Weapon left, Weapon right)
 	{
 		bool hadRight = right != null;
-		int lKick, rKick;
 		double lYAdjust, rYAdjust;
 		
 		if (right)
@@ -41,11 +35,7 @@ struct DualWeaponInfo play
 			lookScale = right.lookScale;
 			
 			bDontBob = right.bDontBob;
-			bAxeBlood = right.bAxeBlood;
-			bStaffKickback = right.bStaff2_Kickback;
-			bNoAutoAim = right.bNoAutoAim;
 			
-			rKick = right.kickback;
 			rYAdjust = right.yAdjust;
 			Ammo1 = right.Ammo1;
 		}
@@ -61,31 +51,18 @@ struct DualWeaponInfo play
 				lookScale = left.lookScale;
 				
 				bDontBob = left.bDontBob;
-				bAxeBlood = left.bAxeBlood;
-				bStaffKickback = left.bStaff2_Kickback;
-				bNoAutoAim = left.bNoAutoAim;
 			}
 			
-			lKick = left.kickback;
 			lYAdjust = left.yAdjust;
 			Ammo2 = left.Ammo1;
 		}
 		
 		if (left && right)
-		{
-			kickback = min(lKick, rKick);
 			yAdjust = max(lYAdjust, rYAdjust);
-		}
 		else if (left)
-		{
-			kickback = lKick;
 			yAdjust = lYAdjust;
-		}
 		else if (right)
-		{
-			kickback = rKick;
 			yAdjust = rYAdjust;
-		}
 	}
 	
 	void SetWeaponInfo(Weapon weap)
@@ -93,7 +70,6 @@ struct DualWeaponInfo play
 		if (!weap)
 			return;
 			
-		weap.kickback = kickback;
 		weap.yAdjust = yAdjust;
 		weap.Ammo1 = Ammo1;
 		weap.Ammo2 = Ammo2;
@@ -104,9 +80,6 @@ struct DualWeaponInfo play
 		weap.lookScale = lookScale;
 		
 		weap.bDontBob = bDontBob;
-		weap.bAxeBlood = bAxeBlood;
-		weap.bStaff2_Kickback = bStaffKickback;
-		weap.bNoAutoAim = bNoAutoAim;
 	}
 }
 
@@ -118,6 +91,8 @@ class DualWieldHolder : Weapon
 	
 	Default
 	{
+		Weapon.KickBack 0;
+		
 		+NOBLOCKMAP
 		+NOSECTOR
 		+INVENTORY.UNDROPPABLE
@@ -135,11 +110,11 @@ class DualWieldHolder : Weapon
 			Stop;
 			
 		Reload:
-			TNT1 A 1 SetReload();
+			TNT1 A 0 SetReload();
 			Goto Ready;
 			
 		Zoom:
-			TNT1 A 1 SetZoom();
+			TNT1 A 0 SetZoom();
 			Goto Ready;
 	}
 	
@@ -414,6 +389,26 @@ class DualWieldHolder : Weapon
 		weapInfo.Reset();
 		weapInfo.UpdateWeaponInfo(holding[LEFT], holding[RIGHT]);
 		weapInfo.SetWeaponInfo(self);
+	}
+	
+	override void OnDestroy()
+	{
+		bool dropped;
+		if (holding[LEFT])
+		{
+			holding[LEFT].bDualWielded = false;
+			if (owner)
+				dropped = owner.DropInventory(holding[LEFT]) != null;
+		}
+			
+		if (holding[RIGHT])
+		{
+			holding[RIGHT].bDualWielded = false;
+			if (owner && !dropped)
+				owner.DropInventory(holding[RIGHT]);
+		}
+			
+		super.OnDestroy();
 	}
 	
 	override void Tick() {}

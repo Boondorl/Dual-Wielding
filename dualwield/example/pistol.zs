@@ -54,7 +54,7 @@ class MPPistol : MPWeapon replaces Pistol
 			Wait;
 			
 		Fire:
-			TNT1 A 0 A_FireBullets(5.6, 0, GetAccuracy(), 5);
+			TNT1 A 0 A_FireBullets(5.6, 0, 1, 5);
 			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP);
 			PISG B 6 A_GunFlash;
 			PISG C 4;
@@ -63,7 +63,7 @@ class MPPistol : MPWeapon replaces Pistol
 			Goto Ready;
 			
 		LeftFire:
-			TNT1 A 0 A_DualFireBullets(8.4, 0, GetAccuracy(), 5);
+			TNT1 A 0 A_DualFireBullets(5.6, 0, 1, 5);
 			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP);
 			PISG B 6 A_DualGunFlash;
 			PISG C 4;
@@ -73,7 +73,7 @@ class MPPistol : MPWeapon replaces Pistol
 			
 		RightFire:
 			TNT1 A 0 A_OverlayFlags(OverlayID(), PSPF_FLIP|PSPF_MIRROR, true);
-			TNT1 A 0 A_DualFireBullets(8.4, 0, GetAccuracy(), 5);
+			TNT1 A 0 A_DualFireBullets(5.6, 0, 1, 5);
 			TNT1 A 0 A_StartSound("weapons/pistol", CHAN_WEAPON, CHANF_OVERLAP);
 			PISG B 6 A_DualGunFlash;
 			PISG C 4;
