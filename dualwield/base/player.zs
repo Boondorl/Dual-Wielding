@@ -106,6 +106,9 @@ class DWPlayerPawn : PlayerPawn
 	{
 		CheckPendingWeapon();
 		
+		State lPrev, rPrev;
+		int lWpnState, rWpnState;
+		DualWieldHolder dwh;
 		let pspr = player.psprites;
 		while (pspr)
 		{
@@ -116,7 +119,7 @@ class DWPlayerPawn : PlayerPawn
 			}
 			else
 			{
-				let dwh = DualWieldHolder(pspr.owner.ReadyWeapon);
+				dwh = DualWieldHolder(pspr.owner.ReadyWeapon);
 				if (dwh)
 				{
 					// Ensure the right caller is set at all times
@@ -124,6 +127,19 @@ class DWPlayerPawn : PlayerPawn
 						pspr.caller = dwh.holding[LEFT];
 					else if (pspr.id == PSP_RIGHTWEAPON || pspr.id == PSP_RIGHTFLASH)
 						pspr.caller = dwh.holding[RIGHT];
+					
+					if (pspr.id == PSP_LEFTWEAPON)
+					{
+						lPrev = pspr.CurState;
+						lWpnState = dwh.holding[LEFT].weaponState;
+						dwh.holding[LEFT].weaponState = 0;
+					}
+					else if (pspr.id == PSP_RIGHTWEAPON)
+					{
+						rPrev = pspr.CurState;
+						rWpnState = dwh.holding[RIGHT].weaponState;
+						dwh.holding[RIGHT].weaponState = 0;
+					}
 						
 					if (!pspr.caller)
 						pspr.Destroy();
@@ -158,6 +174,17 @@ class DWPlayerPawn : PlayerPawn
 					
 				CheckWeaponButtons();
 			}
+		}
+		
+		if (dwh && dwh == player.ReadyWeapon)
+		{
+			let l = player.FindPSprite(PSP_LEFTWEAPON);
+			if (l && dwh.holding[LEFT] && l.CurState == lPrev)
+				dwh.holding[LEFT].weaponState = lWpnState;
+				
+			let r = player.FindPSprite(PSP_RIGHTWEAPON);
+			if (r && dwh.holding[RIGHT] && r.CurState == rPrev)
+				dwh.holding[RIGHT].weaponState = rWpnState;
 		}
 	}
 	
@@ -244,6 +271,7 @@ class DWPlayerPawn : PlayerPawn
 				newState &= ~WF_WEAPONSWITCHOK;
 				
 			newState &= ~WF_REFIRESWITCHOK;
+			newState |= WF_WEAPONBOBBING;
 		}
 		else if (right)
 			newState = right.weaponState;

@@ -241,13 +241,6 @@ class DWWeapon : Weapon
 		player.ReadyWeapon = rw;
 	}
 	
-	override void Tick()
-	{
-		super.Tick();
-		
-		weaponState = 0;
-	}
-	
 	virtual State GetRightAtkState(bool hold)
 	{
 		State s;

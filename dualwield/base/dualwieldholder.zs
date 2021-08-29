@@ -92,6 +92,9 @@ class DualWieldHolder : Weapon
 	Default
 	{
 		Weapon.KickBack 0;
+		Weapon.SelectionOrder 0x7FFFFFFF;
+		Weapon.MinSelectionAmmo1 0x7FFFFFFF;
+		Weapon.MinSelectionAmmo2 0x7FFFFFFF;
 		
 		+NOBLOCKMAP
 		+NOSECTOR
@@ -394,14 +397,14 @@ class DualWieldHolder : Weapon
 	override void OnDestroy()
 	{
 		bool dropped;
-		if (holding[LEFT])
+		if (holding[LEFT] && holding[LEFT].bDualWielded)
 		{
 			holding[LEFT].bDualWielded = false;
 			if (owner)
 				dropped = owner.DropInventory(holding[LEFT]) != null;
 		}
 			
-		if (holding[RIGHT])
+		if (holding[RIGHT] && holding[RIGHT].bDualWielded)
 		{
 			holding[RIGHT].bDualWielded = false;
 			if (owner && !dropped)
